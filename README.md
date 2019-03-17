@@ -6,4 +6,14 @@ A Heroku buildpack that installs the latest production version of Phil Harvey's 
 Usage
 -----
 
-Simply add this Git repo to your `.buildpacks` file and set your Heroku config var `BUILDPACK_URL` to `https://github.com/mojodna/heroku-buildpack-multi.git#build-env`.
+Add this Git repo to buildpacks list in your app.json file, e.g.:
+```
+"buildpacks": [
+  {
+    "url": "heroku/nodejs"
+  },
+  {
+    "url": "https://github.com/velizarn/heroku-buildpack-exiftool.git"
+  }
+]
+```
