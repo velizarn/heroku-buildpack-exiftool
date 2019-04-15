@@ -8,12 +8,39 @@ indent() {
   sed -u 's/^/       /'
 }
 
+## Fail immediately on non-zero exit code.
+set -e
+## Fail immediately on non-zero exit code within a pipeline.
+set -o pipefail
+
 BUILD_DIR=$1
 CACHE_DIR=$2
+ENV_DIR=$3
 BUILDPACK_DIR=`cd $(dirname $0)/..; pwd`
 
-# hardcode TARBALL_URL to v11.32
-TARBALL_URL="https://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.32.tar.gz"
+export_env_dir() {
+  env_dir=$1
+  whitelist_regex=${2:-'^(EXIFTOOL_URL_CUSTOM)$'}
+  blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
+      export "$e=$(cat $env_dir/$e)"
+      :
+    done
+  fi
+}
+
+export_env_dir $ENV_DIR
+
+if [ -z "$EXIFTOOL_URL_CUSTOM" ]; then
+  echo "    -> Custom Exiftool URL is not set, start downloading from default location"
+  # set default TARBALL_URL to v11.32
+  TARBALL_URL="https://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.32.tar.gz"
+else
+  TARBALL_URL="$EXIFTOOL_URL_CUSTOM"
+fi
+
 RENAME_DIR="$(echo "$TARBALL_URL" | perl -ne '/.+\/(.+)\.tar\.gz/ && print $1')"
 VERSION_NO="$(echo "$RENAME_DIR"  | perl -ne '/ExifTool-(.+)$/i   && print $1')"
 
