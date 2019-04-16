@@ -23,8 +23,8 @@ if [ -f $ENV_DIR/EXIFTOOL_URL_CUSTOM ]; then
   echo "Start downloading Exiftool from $TARBALL_URL" | indent
 else  
   echo "Custom Exiftool URL is not set, start downloading from default location" | indent
-  # set default TARBALL_URL to v11.32
-  TARBALL_URL="https://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.32.tar.gz"
+  # set default TARBALL_URL to v11.36
+  TARBALL_URL="https://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.36.tar.gz"
 fi
 
 RENAME_DIR="$(echo "$TARBALL_URL" | perl -ne '/.+\/(.+)\.tar\.gz/ && print $1')"
